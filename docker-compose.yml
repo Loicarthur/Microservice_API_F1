@@ -1,0 +1,49 @@
+services:
+  auth-backend:
+    build: { context: ./, dockerfile: docker/auth/node/Dockerfile }
+    restart: always
+    ports:
+      - "3010:3010"
+    env_file:
+      - ./api/auth-service/.env
+    volumes:
+      - ./api:/usr/node/app/src
+
+  timer-backend:
+    build: { context: ./, dockerfile: docker/timer/node/Dockerfile }
+    restart: always
+    ports:
+      - "3011:3011"
+    env_file:
+      - ./api/timer-service/.env
+    volumes:
+      - ./api:/usr/node/app/src
+
+  user-backend:
+    build: { context: ./, dockerfile: docker/user/node/Dockerfile }
+    restart: always
+    ports:
+      - "3012:3012"
+    env_file:
+      - ./api/users-service/.env
+    depends_on:
+      - user-db
+    volumes:
+      - ./api:/usr/node/app/src
+
+  gateway-backend:
+    build: { context: ./, dockerfile: docker/gateway/node/Dockerfile }
+    restart: always
+    ports:
+      - "3013:3013"
+    env_file:
+      - ./api/gateway-service/.env
+    volumes:
+      - ./api:/usr/node/app/src
+  # users pour mongo
+
+  user-db:
+    build: { context: ./, dockerfile: docker/user/mongo/Dockerfile }
+    restart: always
+    ports:
+      - "27017:27017"
